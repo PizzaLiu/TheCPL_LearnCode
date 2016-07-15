@@ -12,7 +12,7 @@ int main()
     n = 3;
     y = 2;
 
-    printf("setbits(%d, %ud, %ud, %d) = %d\n", x, p, n, y, setbits(x, p, n, y));
+    printf("setbits(%d, %u, %u, %d) = %d\n", x, p, n, y, setbits(x, p, n, y));
 
     return 0;
 }
