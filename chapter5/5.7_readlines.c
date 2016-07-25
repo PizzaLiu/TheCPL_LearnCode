@@ -4,8 +4,9 @@
 #define MAXLINES 5000    /* max #lines to be sorted */
 
 char *lineptr[MAXLINES];  /* pointers to text lines */
+char linestor[MAXLINES];
 
-int readlines(char *lineptr[], int nlines);
+int readlines(char *lineptr[], char *linestor, int nlines);
 void writelines(char *lineptr[], int nlines);
 
 void qsort(char *lineptr[], int left, int right);
@@ -15,7 +16,7 @@ int main()
 {
     int nlines;  /* number of input lines read */
 
-    if((nlines = readlines(lineptr, MAXLINES)) >= 0) {
+    if((nlines = readlines(lineptr, linestor, MAXLINES)) >= 0) {
         qsort(lineptr, 0, nlines-1);
         writelines(lineptr, nlines);
         return 0;
@@ -26,23 +27,27 @@ int main()
 }
 
 #define MAXLEN 1000  /* max length of any input line */
+#define MAXSTOR 5000
 int getlineX(char *, int);
 char *alloc(int);
 
 /* readlines: read input lines */
-int readlines(char *lineptr[], int maxlines)
+int readlines(char *lineptr[], char *linestor, int maxlines)
 {
     int len, nlines;
-    char *p, line[MAXLEN];
+    char line[MAXLEN];
+    char *p = linestor;
+    char *linestop = linestor + MAXSTOR;
 
     nlines = 0;
     while ((len = getlineX(line, MAXLEN)) > 0)
-        if (nlines >= maxlines || (p = alloc(len)) == NULL)
+        if (nlines >= maxlines || p+len > linestop)
             return -1;
         else {
             line[len-1] = '\0';  /* delete newline */
             strcpy(p, line);
             lineptr[nlines++] = p;
+            p += len;
         }
     return nlines;
 }
@@ -77,7 +82,6 @@ void qsort(char *v[], int left, int right)
 /* swap: interchange v[i] and v[j] */
 void swap(char *v[], int i, int j)
 {
-    printf("%d:%c  %d:%c\n", i, *v[i], j, *v[j]);
     char *temp;
     temp = v[i];
     v[i] = v[j];
